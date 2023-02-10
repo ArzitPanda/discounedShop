@@ -1,5 +1,6 @@
 import { Menu } from 'antd';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
 
@@ -9,10 +10,23 @@ const Navbar = () => {
 
 
 
+const colorConstant =(path)=>{
 
-    
+
+  if(path===router.pathname)
+  {
+      return `blue`
+  }
+  else
+  {
+    return `black`
+  }
 
 
+}
+    const router =useRouter()
+
+// console.log(router)
 
 
   return (
@@ -20,8 +34,28 @@ const Navbar = () => {
     <div>myStore</div>
    <Menu
 
+      
+        items={[{label:"cart",key:'order',
         
-        items={[{label:"cart",key:'order'},{label:"home",key:'home'},]}
+          style:{
+            animation:'both',
+            accentColor:'ActiveBorder',
+            color:colorConstant("/cart")           },
+        onClick:(e)=>{
+
+router.push("/cart")
+
+}},{label:"home",
+
+color:colorConstant('/') ,
+key:'home',
+
+ popupOffset:3
+,onClick:(e)=>{
+
+              router.push("/")
+
+        }},]}
         mode="horizontal"
    />
    </div>

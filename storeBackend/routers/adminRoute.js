@@ -30,18 +30,18 @@ adminRouter.get("/quant",(req,res)=>{
 
 orders.map((ele)=>{
 
-    ele.items.map((element)=>{
+    ele.items.map((element,idx)=>{
 
             if(element.id in item) {
 
 
                     
-                item[element.id] = item[element.id]+element.quant
+                item[element.id] ={...item[element.id],quant: item[element.id].quant+element.quant}
 
             }
             else
             {
-                item[element.id] = element.quant
+                item[element.id] = element
             }
 
     })

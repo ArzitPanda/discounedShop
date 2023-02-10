@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useDispatch ,useSelector} from 'react-redux'
 import { addProduct } from '@/store/productReducers'
 import { Button, Card } from 'antd'
+import { add_product } from '../store/cartReducer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -34,8 +35,22 @@ const Dispatch=useDispatch()
    
     
     },[])
-    const data =useSelector(state=>state.products)
-    console.log(data)
+
+    const data =useSelector(state=>state)
+   console.log(data);
+const addTocart =(ele,quan)=>{
+
+          Dispatch(add_product({...ele,quant:parseInt(quan)}))
+
+          console.log(data)
+
+
+
+
+}
+
+
+
   return (
     <>
       <Head>
@@ -46,7 +61,7 @@ const Dispatch=useDispatch()
       </Head>
    <Navbar/>
    <div style={{display:'flex',flexDirection:'row',columnGap:20}}>
-      { data && data.map((ele)=>{
+      { data.products && data.products.map((ele)=>{
 
             return( <Card  bordered={false} style={{ width: 300 }}
             cover={<img src={ele.imgLink} alt="ele.p" height="300" style={{objectFit:'cover'}} />}
@@ -54,7 +69,7 @@ const Dispatch=useDispatch()
             
     <p style={{fontSize:20,fontWeight:500}}>{ele.name}</p>
     <p>Rs {ele.price}</p>
-<Button>add to cart</Button>
+<Button onClick={()=>{addTocart(ele,1)}}>add to cart</Button>
   </Card>)
 
 
