@@ -8,6 +8,13 @@ let nthCustomer=2; //by default nth customer has the value 2
 
 
 
+
+const getNth=(req,res)=>{
+
+
+res.send({nth:nthCustomer})
+
+}
 const getNthCustomer =()=>{
 
 
@@ -104,4 +111,4 @@ const getOrders =(req,res)=>{
 
 
 
-module.exports ={addProduct,getAllProducts,getSellQuantity,deleteItem,getOrders,setNthCustomer,getNthCustomer}
+module.exports ={addProduct,getAllProducts,getSellQuantity,deleteItem,getOrders,setNthCustomer,getNthCustomer,getNth}

@@ -1,4 +1,4 @@
-import { Button, message } from 'antd'
+import { Button, message, Tag } from 'antd'
 import axios from 'axios'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar'
 import { add_product,empty_cart,remove_product,remove_specific_Product } from '../store/cartReducer'
 import {NOT_ELIGIBLE} from "../Constant"
 import style from '../styles/Cart.module.css'
+import CartCard from '@/components/CartCard'
 
 
 
@@ -82,6 +83,9 @@ const placeOrder=()=>{
             setCoupn("")
             
             }).catch(err=>console.log(err))
+
+            messageApi.info("sucessfully make order",3)
+            localStorage.removeItem("cartuser")
         }
         else
         {
@@ -100,29 +104,6 @@ const Total = useMemo(() => cartTotal(), [Cart]);
 
 
 
-        const addOneItem=(elem)=>{
-
-
-            DisPatch(add_product({...elem,quant:1}))
-
-
-        }
-
-        const removeOneItem=(elem)=>{
-
-                DisPatch(remove_product({id:elem.id}))
-
-
-
-        }
-        const removeOneItemTotal=(elem)=>{
-
-            DisPatch(remove_specific_Product({id:elem.id}))
-
-
-
-
-    }
 
 
 
@@ -141,47 +122,40 @@ const Total = useMemo(() => cartTotal(), [Cart]);
 
     <div>
         <Navbar/>
-        <div className={style.container}>
-        <div className={style.productContainer}>      {
-          Cart?  Cart.map((ele)=>{
-                    return(<div key ={ele.id} className={style.productItem}>
-                            <div className={style.imageContainer}> 
-                                <img src={ele.imgLink} alt="productImage"/>
-                           
-                            </div>
-                            <div className={style.productDetail}>
-                            <h1 className={style.name}>{ele.name}</h1>
-                            <h4 className={style.price}>{ele.price}</h4>
-                                <div className={style.buttonContainer}>
-                                  <Button onClick ={()=>{addOneItem(ele)}}>+</Button>
-                                  <div>{ele.quant}</div>
-                                  <Button onClick ={()=>{removeOneItem(ele)}}>-</Button>
-
-                                </div>
-                            </div>
-
-                        </div>)
+        <div className="font-semibold text-lg">your items</div>
+        <div className="h-screen flex flex-col md:flex-row items-center gap-6">
+        <div className="w-full h-full flex flex-col gap-4 justify-start">      {
+          Cart.length>0?  Cart.map((ele)=>{
+                    return(
+                        <>
+                          <CartCard elem={ele}/>
+                        </>
+                    )
 
 
 
-            }):(<div>cart is empty</div>)
+            }):(<div className="w-full h-full text-xl flex items-center justify-center">cart is empty</div>)
         }
         </div>
-  <div className={style.checkOut}>
 
-        <div className={style.totalPrice}>total amount {coupon?.coupon ? `${Math.floor(Total*0.9)} (discounted value)`:Total}</div>
 
-        <Button onClick={requestCoupon}>RequestCoupon</Button>
-        {
-            coupon && (<div className={style.coupon}>
-                    {coupon?.message}
+        {Cart.length >0 &&  <div className={`w-full md:w-3/5 flex md:h-screen h-96 items-center flex-start flex-col p-4 gap-4 bg-slate-100 rounded-lg`}>
+
+<div className={`text-lg font-semibold`}>total amount Rs. {coupon?.coupon ? `${Math.floor(Total*0.9)} (discounted value)`:Total}</div>
+<div className="flex flex-roe items-center gap-4">
+<Button onClick={requestCoupon}>RequestCoupon</Button>
+
+<Button onClick={placeOrder}>placeOrder</Button>
+</div>
+{
+    coupon && (<div className={`bg-slate-200 flex flex-col items-center flex-start pl-6`}>
+           <Tag> {coupon?.message}</Tag>
 <p>{coupon?.coupon}</p>
 
-            </div>)
-        }
-        <Button onClick={placeOrder}>placeOrder</Button>
-
- </div>
+    </div>)
+}
+</div>}
+ 
 
        
 

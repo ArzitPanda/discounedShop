@@ -1,7 +1,7 @@
 const express =require('express');
 
 
-const { addProduct, getAllProducts, getSellQuantity, deleteItem, getOrders, setNthCustomer } = require('../controllers/adminController.js');
+const { addProduct, getAllProducts, getSellQuantity, deleteItem, getOrders, setNthCustomer, getNth } = require('../controllers/adminController.js');
 
 
 const adminRouter =express.Router();
@@ -11,7 +11,7 @@ const adminRouter =express.Router();
 adminRouter.post("/",addProduct)
 //adding the product which will added by the seller
 
-
+adminRouter.get("/nth",getNth)
 
 adminRouter.get("/",getAllProducts)
 //geting all the product listed by the seller

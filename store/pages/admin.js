@@ -7,18 +7,21 @@ import { message } from 'antd';
 const {Header,Content,Footer,Sider} =Layout 
 
 
-const [messageApi, contextHolder] = message.useMessage();
+
 
 
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import CouponList from '@/components/CouponList';
+import AddProductModal from '@/components/AddProductModal';
+import ProductTable from '@/components/ProductTable';
+import NthModal from '@/components/NthModal';
 
 const admin = () => {
 
-
-
-
+  const [messageApi, contextHolder] = message.useMessage();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const Dispatch =useDispatch()
 const sucess =()=>{
 
     messageApi.open(
@@ -30,12 +33,28 @@ const sucess =()=>{
 
 
 }
+useEffect(()=>{
 
+
+
+  axios.get("http://localhost:3000").then(res=>{
+    
+  
+  Dispatch(addProduct(res.data)
+  
+  )
+  
+}).catch(err=>console.log(err))
+  
+  
+ 
+  
+  },[])
 
 const[name,setName]=useState("");
 const[price,setPrice]=useState(0);
 const[img,setImg]=useState("");
-const Dispatch =useDispatch()
+
 
 const [products,setProducts]=useState([])
 console.log(products)
@@ -115,38 +134,9 @@ setItems(newItem)
 
 },[])
 
-    
-
-
-
-  
-
-
-const itemsKey = [
-  {
-    key: '1',
-    label: `ProductSell`,
-    children: <div className={styles.itemsTable}>
-   
-       <Table dataSource={items} columns={columns} />;
-      </div>,
-  },
-  {
-    key: '2',
-    label: `Coupon List`,
-    children: <CouponList/>,
-    
-  },
-  {
-    key: '3',
-    label: `Product Details`,
-    children: `Content of Tab Pane 3`,
-  },
-];
-
 const [error,setError]=useState(false)
 
-const addProduct =()=>{
+const addProducts =()=>{
 if(name&&price&&img)
 {
 
@@ -176,41 +166,113 @@ else
 setName("");
 setPrice(0);
 setImg("");
+setIsModalOpen(false)
+}
+else
+{
+  message.warning("can not be null",2)
 }
        
 }
+
+
+
+  
+const productsArray =useSelector(state=>state.products)
+
+const itemsKey = [
+  {
+    key: '1',
+    label: `ProductSell`,
+    children: <div className={styles.itemsTable}>
+   
+       <Table dataSource={items} columns={columns} />;
+      </div>,
+  },
+  {
+    key: '2',
+    label: `Coupon List`,
+    children: <CouponList/>,
+    
+  },
+  {
+    key: '3',
+    label: `Product Details`,
+    children:   <div>
+
+    <AddProductModal addProduct={addProducts} setImg={setImg} setName={setName} setPrice={setPrice} name={name} price={price} img={img}
+    
+    isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+
+    
+     />
+         <ProductTable products={productsArray }/>
+    
+    </div>,
+  },
+];
+
+
+
+
+const[nth,setNth]=useState(null)
+
+
+
+useEffect(()=>{
+
+
+
+axios.get("http://localhost:3000/nth").then(res=>{
+
+  setNth(res.data.nth)
+
+
+}).catch(err=>console.log(err))
+
+
+},[])
+
+
+
 
   return (
     <>
 
  {contextHolder}
-    <Layout style={{
-        height:'100vh',
-       
-      
-    }}
+
+    <Layout className="w-full h-screen flex flex-col md:flex-row"
     >
     
     <Sider
    width={350}
-   style={{backgroundColor:'white',display:'flex',justifyContent: 'center',alignItems: 'center'}}
+className="bg-white w-full  items-center justify-center hidden lg:flex"
      > 
 
 
-     <div style={{width:'100%',height:'100%',
+     <div className="w-full h-full items-center justify-center bg-white hidden lg:flex">
+     <div style={{width:350,display:'flex',
      
-     backgroundColor:'white',display:'flex',justifyContent: 'center',alignItems: 'center'}}>
-     <div style={{width:300,display:'flex',alignItems: 'center',flexDirection: 'column',rowGap:20}}>
+     paddingRight:4,
+     paddingLeft:4,
+     alignItems: 'center',flexDirection:'column',rowGap:20,justifyContent:'center'}}>
             <Input addonBefore="name:"  placeholder='enter product name' value={name} onChange={(e)=>{setName(e.target.value)}}/>
              <Input addonBefore="price:"  type="number" placeholder='enter product price'  value={price} onChange={(e)=>{setPrice(e.target.value)}} />
              <Input addonBefore="imglink:"  placeholder='enter product link' value={img} onChange={(e)=>{setImg(e.target.value)}} />
-                <Button onClick={addProduct}>add to product</Button>
+                <Button onClick={addProducts}>add to product</Button>
             </div>
      </div>
             </Sider>
+    
     <Layout>
-      <Header style={{backgroundColor:'white'}} >
-        <div className={styles.Header}>ADMIN PANEL</div>
+      <Header 
+      style={{backgroundColor:"white"}}
+      className={`bg-white flex flex-row items-center justify-between px-6`} >
+        <div className={styles.Header}>ADMIN PANEL luckyValue: {nth}</div>
+        <div className="flex flex-row gap-4">
+       
+        <NthModal setNth={setNth}/>
+        </div>
       </Header>
       <Content className={styles.Content}>
    
@@ -220,6 +282,7 @@ setImg("");
       </Content>
    
     </Layout>
+   
   </Layout>
   </>
   )
