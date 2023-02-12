@@ -1,72 +1,40 @@
 const express =require('express');
-const { products } = require('../products.js');
-const { uuid } = require('uuidv4');
-const { orders } = require('../orders.js');
+
+
+const { addProduct, getAllProducts, getSellQuantity, deleteItem, getOrders, setNthCustomer } = require('../controllers/adminController.js');
 
 
 const adminRouter =express.Router();
 
 
 
-adminRouter.post("/",(req,res)=>{
-
-        const {name,price,imgLink} =req.body;
-const id= uuid();
-
-const product ={name,price,id,imgLink}
-        products.push(product);
-        
-res.status(400).json({message:"sucessfully added",product})
-
-})
-adminRouter.get("/",(req,res)=>{
-
-res.send(products)
-
-})
-
-adminRouter.get("/quant",(req,res)=>{
-        let item={};
-
-orders.map((ele)=>{
-
-    ele.items.map((element,idx)=>{
-
-            if(element.id in item) {
-
-
-                    
-                item[element.id] ={...item[element.id],quant: item[element.id].quant+element.quant}
-
-            }
-            else
-            {
-                item[element.id] = element
-            }
-
-    })
-
-
-})
-        res.send(item);
-
-
-})
-
-adminRouter.delete("/:id",(req,res)=>{
-const {id} =req.query
-    const product = products.filter((elem)=>elem.id===id)
-    res.send({msg:"deleted"})
-
-
-})
-
-
-adminRouter.get("/orders",(req,res)=>{
-    res.send(orders)
+adminRouter.post("/",addProduct)
+//adding the product which will added by the seller
 
 
 
-})
+adminRouter.get("/",getAllProducts)
+//geting all the product listed by the seller
+
+adminRouter.get("/quant",getSellQuantity)
+//get all the individually   selling quantity of the products  
+
+
+
+adminRouter.delete("/:id",deleteItem)
+//delete  the item by id
+
+
+
+
+adminRouter.post("/nth",setNthCustomer)
+//set the nth customer which will get the discount of 10%
+
+
+
+adminRouter.get("/orders",getOrders)
+//get all the orders which will take placed
+
+
 
 module.exports ={adminRouter}

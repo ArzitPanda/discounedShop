@@ -3,11 +3,11 @@ import axios from 'axios';
 import { addProduct } from '../store/productReducers'
 import styles from '../styles/Admin.module.css'
 
-
+import { message } from 'antd';
 const {Header,Content,Footer,Sider} =Layout 
 
 
-
+const [messageApi, contextHolder] = message.useMessage();
 
 
 import React, { useEffect, useState } from 'react'
@@ -15,6 +15,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import CouponList from '@/components/CouponList';
 
 const admin = () => {
+
+
+
+
+const sucess =()=>{
+
+    messageApi.open(
+{
+      type: 'success',
+      content: 'sucessfully added',
+    }
+    )
+
+
+}
 
 
 const[name,setName]=useState("");
@@ -129,34 +144,53 @@ const itemsKey = [
   },
 ];
 
-
+const [error,setError]=useState(false)
 
 const addProduct =()=>{
+if(name&&price&&img)
+{
 
-        axios.post("http://localhost:3000/",{
+  axios.post("http://localhost:3000/",{
 
-                name,price:parseInt(price),imgLink:img
+  name,price:parseInt(price),imgLink:img
 
-        }).then((res)=>{
-                console.log(res.data);
-
-
-
-        }).catch(err=>{console.log(err)})
+}).then((res)=>{
+  console.log(res.data);
 
 
-            setName("");
-            setPrice(0);
-            setImg("");
+
+}).catch(err=>{console.log(err);
+
+setError(true)
+
+})
+
+if(error===false)
+{
+  messageApi.success("sucessfully added",2)
+}
+else
+{
+  messageApi.error("can not be added",2)
+}
+setName("");
+setPrice(0);
+setImg("");
+}
+       
 }
 
   return (
+    <>
+
+ {contextHolder}
     <Layout style={{
         height:'100vh',
        
       
     }}
     >
+    
     <Sider
    width={350}
    style={{backgroundColor:'white',display:'flex',justifyContent: 'center',alignItems: 'center'}}
@@ -187,6 +221,7 @@ const addProduct =()=>{
    
     </Layout>
   </Layout>
+  </>
   )
 }
 
